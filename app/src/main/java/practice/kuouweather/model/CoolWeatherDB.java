@@ -101,9 +101,9 @@ public class CoolWeatherDB {
     /**
      * 从数据库读取某个省份所有城市的信息。
      */
-    public List<City> LoadCities(){
+    public List<City> LoadCities(int provinceId){
         List<City> list=new ArrayList<City>();
-        Cursor cursor=db.query("City",null,null,null,null,null,null);
+        Cursor cursor=db.query("City",null,"province_id=?",new String[]{String.valueOf(provinceId)},null,null,null);
         if(cursor.moveToFirst()){
             do{
                 City city=new City();
@@ -131,9 +131,9 @@ public class CoolWeatherDB {
     /*
     读取某个城市下所有的县的信息；
     */
-    public List<County> LoadCounties(){
+    public List<County> LoadCounties(int cityId){
         List<County> list=new ArrayList<County>();
-        Cursor cursor=db.query("County",null,null,null,null,null,null);
+        Cursor cursor=db.query("County",null,"city_id=?",new String[]{String.valueOf(cityId)},null,null,null);
         if(cursor.moveToFirst()){
             do {
                 County county=new County();

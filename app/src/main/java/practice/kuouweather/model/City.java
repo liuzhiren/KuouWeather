@@ -4,12 +4,12 @@ package practice.kuouweather.model;
  * Created by a312689543 on 2016/4/13.
  */
 public class City {
-    private String id;
+    private int id;
     private String cityName;
     private String cityCode;
     private int provinceId;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
