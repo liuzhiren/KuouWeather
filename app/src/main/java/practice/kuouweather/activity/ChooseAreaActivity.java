@@ -2,6 +2,10 @@ package practice.kuouweather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.renderscript.ScriptGroup;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -63,6 +67,13 @@ public class ChooseAreaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(this);
+        if(pref.getBoolean("city_selected",false)){
+            Intent intent=new Intent(this,WeatherLActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         setContentView(R.layout.choose_area);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         mListView=(ListView)findViewById(R.id.list_view);
@@ -70,7 +81,6 @@ public class ChooseAreaActivity extends Activity {
         mTextView=(TextView)findViewById(R.id.title_text);
         mListView.setAdapter(mAdapter);
         mCoolWeatherDB=CoolWeatherDB.getInstance(this);
-        Log.d("Main","1");
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -81,6 +91,13 @@ public class ChooseAreaActivity extends Activity {
                 else if (currentLevel==LEVEL_CITY){
                     selectCity=mCityList.get(position);
                     queryCounties();
+                }else if(currentLevel==LEVEL_COUNTY){
+                    String countyCode=mCountyList.get(position).getCountyCode();
+                    Log.d("Main",countyCode);
+                    Intent intent=new Intent(ChooseAreaActivity.this,WeatherLActivity.class);
+                    intent.putExtra("county_code",countyCode);
+                    startActivity(intent);
+                    finish();
                 }
 
             }
