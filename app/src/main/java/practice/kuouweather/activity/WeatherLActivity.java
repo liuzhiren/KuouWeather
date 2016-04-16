@@ -2,6 +2,7 @@ package practice.kuouweather.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import practice.kuouweather.R;
+import practice.kuouweather.service.AutoUpdateWeatherService;
 import practice.kuouweather.util.HttpCallbackListener;
 import practice.kuouweather.util.HttpUtil;
 import practice.kuouweather.util.Utility;
@@ -56,6 +58,8 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
         weather_text_info= (LinearLayout) findViewById(R.id.weather_info_layout);
         switchCity= (Button) findViewById(R.id.switch_city);
         refreshWeather= (Button) findViewById(R.id.refresh_data);
+        switchCity.setOnClickListener(this);
+        refreshWeather.setOnClickListener(this);
         String countyCode=getIntent().getStringExtra("county_code");
         Log.d("Main", "1");
         if(!TextUtils.isEmpty(countyCode)){
@@ -75,7 +79,21 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.switch_city:
+                Intent intent =new Intent(this,ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity", true);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.refresh_data:
+                punlishTime.setText("同步中...");
+                SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
+                String weatherCode=pref.getString("weathercode","");
+                if(!TextUtils.isEmpty(weatherCode)){
+                    queryWeatherInfo(weatherCode);
+                }
 
+                break;
+            default:break;
         }
 
     }
@@ -149,12 +167,15 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
         temp1.setText(pref.getString("temp1",""));
         temp2.setText(pref.getString("temp2",""));
         weatherDesp.setText(pref.getString("weatherDesp",""));
-        currentTime.setText(pref.getString("currentDate",""));
+        currentTime.setText(pref.getString("currentDate", ""));
         weather_text_info.setVisibility(View.VISIBLE);
         cityName.setVisibility(View.VISIBLE);
+        Intent intent=new Intent(this, AutoUpdateWeatherService.class);
+        this.startService(intent);
+
     }
 
 
-    @Override
+
 
 }

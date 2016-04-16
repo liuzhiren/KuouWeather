@@ -14,7 +14,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/Home"
+            android:background="@drawable/home"
             />
         <TextView
             android:layout_centerInParent="true"
