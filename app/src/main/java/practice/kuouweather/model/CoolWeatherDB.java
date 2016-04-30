@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,6 +145,28 @@ public class CoolWeatherDB {
                 list.add(county);
             }while (cursor.moveToNext());
         }
+        return list;
+    }
+    public void saveCityListName(CityListName cityListName){
+        if(cityListName!=null){
+            ContentValues values=new ContentValues();
+            Log.d("addCity",cityListName.getCityName());
+            values.put("city_name",cityListName.getCityName());
+            db.insert("CityListName", null, values);
+        }
+    }
+    public List<CityListName> LoadCityNameList(){
+        List<CityListName> list=new ArrayList<CityListName>();//对象数组
+        Log.d("addCity",""+list.size());
+        Cursor cursor=db.query("CityListName",null,null,null,null,null,null);
+        if(cursor.moveToFirst()){
+            do{
+                CityListName cityListName = new CityListName();
+                cityListName.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                cityListName.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
+                list.add(cityListName);
+            }while (cursor.moveToNext());
+        }Log.d("addCity",""+list.size());
         return list;
     }
 

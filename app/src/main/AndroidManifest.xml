@@ -6,13 +6,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@drawable/logo"
+        android:label="月光宝盒"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Light.NoTitleBar">
         <activity
             android:name=".activity.ChooseAreaActivity"
-            android:label="@string/app_name">
+            android:label="月光宝盒">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -21,12 +21,15 @@
         </activity>
         <activity android:name=".activity.WeatherLActivity">
         </activity>
+        <activity android:name=".activity.ListCityActivity">
+        </activity>
+
         <receiver android:name=".receiver.AutoUpdateWeatherRecivce">
-
         </receiver>
-        <service android:name=".service.AutoUpdateWeatherService">
 
+        <service android:name=".service.AutoUpdateWeatherService">
         </service>
+
     </application>
 
 </manifest>

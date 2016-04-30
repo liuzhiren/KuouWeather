@@ -31,6 +31,13 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
             +"county_name text ,"
             +"county_code text,"
             +"city_id integer)";
+    /*
+    添加的城市名称列表
+     */
+    public static final String CREATE_CITYLIST="create table CityListName("
+            +"id integer primary key  autoincrement,"
+            +"city_list_name text )";
+
     public CoolWeatherOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -40,6 +47,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_PROVINCE);//创建Province表
         db.execSQL(CREATE_CITY);//创建City表
         db.execSQL(CREATE_COUNTY);//创建County表
+        db.execSQL(CREATE_CITYLIST);//创建添加的城市名称列表
     }
 
     @Override

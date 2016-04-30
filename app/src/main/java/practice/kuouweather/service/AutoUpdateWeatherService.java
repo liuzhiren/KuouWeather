@@ -50,7 +50,7 @@ public class AutoUpdateWeatherService extends Service {
             @Override
             public void onFinish(String response) {
                 Utility.handleWeatherResponse(AutoUpdateWeatherService.this,response);
-                
+
             }
 
             @Override

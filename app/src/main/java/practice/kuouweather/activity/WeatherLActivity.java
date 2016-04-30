@@ -8,15 +8,21 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import practice.kuouweather.R;
+import practice.kuouweather.model.CityListName;
+import practice.kuouweather.model.CoolWeatherDB;
 import practice.kuouweather.service.AutoUpdateWeatherService;
 import practice.kuouweather.util.HttpCallbackListener;
 import practice.kuouweather.util.HttpUtil;
+import practice.kuouweather.util.SmartWeatherUrlUtil;
 import practice.kuouweather.util.Utility;
 
 public class WeatherLActivity extends Activity implements View.OnClickListener {
@@ -43,6 +49,7 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
      *  更新天气按钮
      */
     private Button refreshWeather;
+    private CoolWeatherDB mCoolWeatherDB;
 
 
     @Override
@@ -87,7 +94,7 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
             case R.id.refresh_data:
                 punlishTime.setText("同步中...");
                 SharedPreferences pref=PreferenceManager.getDefaultSharedPreferences(this);
-                String weatherCode=pref.getString("weathercode","");
+                String weatherCode=pref.getString("citycode","");
                 if(!TextUtils.isEmpty(weatherCode)){
                     queryWeatherInfo(weatherCode);
                 }
@@ -106,6 +113,12 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
         queryFromServe(adress, "countyCode");
 
     }
+  /*新Api调用
+    private void queryWeatherInfo(String countyCode) {
+        String adress= SmartWeatherUrlUtil.getInterfaceURL(countyCode,"forecast_f");
+        queryFromServe(adress, "weatherCode");
+
+    }*/
     /**
      * 查询天气代号所对应的天气。
      */
@@ -123,28 +136,28 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
         HttpUtil.sendRequestHttp(adress, new HttpCallbackListener() {
             @Override
             public void onFinish(final String response) {
-               if("countyCode".equals(type)){
-                   if(!TextUtils.isEmpty(response)){
-                       String [] array=response.split("\\|");
-                       if(array!=null && array.length>0){
-                           String weatherCode=array[1];
-                           Log.d("Main","4");
-                           queryWeatherInfo(weatherCode);
-                       }
+                if ("countyCode".equals(type)) {
+                    if (!TextUtils.isEmpty(response)) {
+                        String[] array = response.split("\\|");
+                        if (array != null && array.length > 0) {
+                            String weatherCode = array[1];//areaid 城市编号
+                            Log.d("Main", "4");
+                            queryWeatherInfo(weatherCode);
+                        }
 
-                   }
-               }
-                else if("weatherCode".equals(type)){
-                   Log.d("Main","5");
-                   Utility.handleWeatherResponse(WeatherLActivity.this,response);
-                   runOnUiThread(new Runnable() {
-                       @Override
-                       public void run() {
-                           showWeather();
-                       }
-                   });
                     }
+                } else if ("weatherCode".equals(type)) {
+                    Log.d("Main", "5");
+                    Utility.handleWeatherResponse(WeatherLActivity.this, response);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showWeather();
+                        }
+                    });
                 }
+            }
+
             @Override
             public void onError(Exception e) {
                 runOnUiThread(new Runnable() {
@@ -164,8 +177,14 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
         SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(this);
         cityName.setText(pref.getString("cityName",""));
         punlishTime.setText("今天"+(pref.getString("publishTime",""))+"发布");
-        temp1.setText(pref.getString("temp1",""));
-        temp2.setText(pref.getString("temp2",""));
+        if(pref.getString("temp1","").compareTo(pref.getString("temp2","")) > 0 ){
+            temp1.setText(pref.getString("temp2",""));
+            temp2.setText(pref.getString("temp1",""));
+        }else{
+            temp1.setText(pref.getString("temp1",""));
+            temp2.setText(pref.getString("temp2",""));
+        }
+
         weatherDesp.setText(pref.getString("weatherDesp",""));
         currentTime.setText(pref.getString("currentDate", ""));
         weather_text_info.setVisibility(View.VISIBLE);
@@ -173,6 +192,45 @@ public class WeatherLActivity extends Activity implements View.OnClickListener {
         Intent intent=new Intent(this, AutoUpdateWeatherService.class);
         this.startService(intent);
 
+    }
+    /*
+    设置一个Setting菜单按钮
+     */
+    public boolean  onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.close_Auto_Upadate_Service:
+                //是否关闭自动更新
+                Intent intent=new Intent(this, AutoUpdateWeatherService.class);
+                stopService(intent);
+                Toast.makeText(WeatherLActivity.this,"close_Auto_Upadate_Service",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.open_Auto_Upadate_Service:
+                Intent intent1=new Intent(this, AutoUpdateWeatherService.class);
+                startService(intent1);
+                Toast.makeText(WeatherLActivity.this,"open_Auto_Upadate_Service",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.setting:
+                SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(this);
+                Intent intent2 = new Intent(WeatherLActivity.this,ListCityActivity.class);
+                intent2.putExtra("city_name",pref.getString("cityName",""));
+                intent2.putExtra("city_temp1",pref.getString("temp1",""));
+                intent2.putExtra("city_temp2",pref.getString("temp2",""));
+                intent2.putExtra("from_weather_city_activity", true);
+                Log.d("set", pref.getString("cityName", ""));
+                //CityListName cityListName = new CityListName();
+                //cityListName.setCityName(pref.getString("cityName",""));
+                //mCoolWeatherDB.saveCityListName(cityListName);
+                //Toast.makeText(WeatherLActivity.this,"打开了设置界面",Toast.LENGTH_SHORT).show();
+                startActivity(intent2);
+
+                break;
+            default: break;
+        }
+        return true;
     }
 
 

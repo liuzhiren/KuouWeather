@@ -80,7 +80,7 @@
                 android:layout_gravity="center"
                 >
                 <TextView
-                    android:id="@+id/temp2_data"
+                    android:id="@+id/temp1_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -100,7 +100,7 @@
                     android:paddingTop="10dp"/>
                 <TextView
                     android:layout_gravity="center_vertical"
-                    android:id="@+id/temp1_data"
+                    android:id="@+id/temp2_data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#fff"

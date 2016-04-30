@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,26 +84,28 @@ public class Utility {
     }
     /*
     * 解析服务器返回的天气信息*/
-    public static void handleWeatherResponse(Context context,String response){
-        try{
-            JSONObject jsonObject=new JSONObject(response);
-            JSONObject weatherinfo=jsonObject.getJSONObject("weatherinfo");
-            String cityName=weatherinfo.getString("city");
-            String weathercode=weatherinfo.getString("cityid");
-            String temp1=weatherinfo.getString("temp1");
-            String temp2=weatherinfo.getString("temp2");
-            String weatherDesp=weatherinfo.getString("weather");
-            String publishTime=weatherinfo.getString("ptime");
+    public static void handleWeatherResponse(Context context,String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONObject weatherinfo = jsonObject.getJSONObject("weatherinfo");
+            String cityName = weatherinfo.getString("city");
+            String weathercode = weatherinfo.getString("cityid");
+            String temp1 = weatherinfo.getString("temp1");
+            String temp2 = weatherinfo.getString("temp2");
+            String weatherDesp = weatherinfo.getString("weather");
+            String publishTime = weatherinfo.getString("ptime");
             //把数据储存到shareprefenerce里去
-            saveWeatherInfo(context,cityName,weathercode,temp1,temp2,weatherDesp,publishTime);
+            saveWeatherInfo(context, cityName, weathercode, temp1, temp2, weatherDesp, publishTime);
+            //saveWeatherInfo(context,cityName,citycode,temp1,weatherDesp,publishTime);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
         /**
          *  将服务器返回的所有天气信息存储到SharedPreferences 文件中。
          */
-    }
+
 
     private static void saveWeatherInfo(Context context, String cityName, String weathercode,
                                         String temp1, String temp2, String weatherDesp, String publishTime) {

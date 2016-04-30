@@ -2,8 +2,11 @@ package practice.kuouweather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.renderscript.ScriptGroup;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import practice.kuouweather.R;
+import practice.kuouweather.db.CoolWeatherOpenHelper;
 import practice.kuouweather.model.City;
+import practice.kuouweather.model.CityListName;
 import practice.kuouweather.model.CoolWeatherDB;
 import practice.kuouweather.model.County;
 import practice.kuouweather.model.Province;
@@ -66,12 +71,17 @@ public class ChooseAreaActivity extends Activity {
     private int currentLevel;
     //是否从weatherActivity中跳转过来的标识
     private boolean isFromWeatherActivity;
+    //是否从ListCityActivity中跳转过来的标识
+    private boolean isFromListCityActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isFromWeatherActivity=getIntent().getBooleanExtra("from_weather_activity",false);
+        isFromListCityActivity = getIntent().getBooleanExtra("from_list_city_activity",false);
+        Log.d("haha","isFromListCityActivity is"+isFromListCityActivity);
         SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(this);
-        if(pref.getBoolean("city_selected",false)&& !isFromWeatherActivity){
+        if(pref.getBoolean("city_selected",false)&& !isFromWeatherActivity && !isFromListCityActivity){
             Intent intent=new Intent(this,WeatherLActivity.class);
             startActivity(intent);
             finish();
@@ -94,11 +104,28 @@ public class ChooseAreaActivity extends Activity {
                 else if (currentLevel==LEVEL_CITY){
                     selectCity=mCityList.get(position);
                     queryCounties();
-                }else if(currentLevel==LEVEL_COUNTY){
-                    String countyCode=mCountyList.get(position).getCountyCode();
-                    Log.d("Main",countyCode);
-                    Intent intent=new Intent(ChooseAreaActivity.this,WeatherLActivity.class);
-                    intent.putExtra("county_code",countyCode);
+                }else if(currentLevel==LEVEL_COUNTY && isFromListCityActivity ){
+                    String countyName=mCountyList.get(position).getCountyName();
+                    Intent intent=new Intent(ChooseAreaActivity.this,ListCityActivity.class);
+                    intent.putExtra("county_name", countyName);
+                    intent.putExtra("from_chosse_city_activity", true);
+                    Log.d("addCity", countyName);
+                    CityListName cityListName = new CityListName();
+                    cityListName.setCityName(countyName);
+                    mCoolWeatherDB.saveCityListName(cityListName);
+
+                    startActivity(intent);
+                    finish();
+                }
+                else if(currentLevel==LEVEL_COUNTY && isFromWeatherActivity ) {
+                    String countyCode = mCountyList.get(position).getCountyCode();
+                    String countyName = mCountyList.get(position).getCountyName();
+                    Log.d("Main", countyCode);
+                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherLActivity.class);
+                    intent.putExtra("county_code", countyCode);
+                    CityListName cityListName = new CityListName();
+                    cityListName.setCityName(countyName);
+                    mCoolWeatherDB.saveCityListName(cityListName);
                     startActivity(intent);
                     finish();
                 }
@@ -242,6 +269,7 @@ public class ChooseAreaActivity extends Activity {
             finish();
         }
     }
+
 
 
 }
