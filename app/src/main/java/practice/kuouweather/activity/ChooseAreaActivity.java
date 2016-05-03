@@ -112,6 +112,7 @@ public class ChooseAreaActivity extends Activity {
                     Log.d("addCity", countyName);
                     CityListName cityListName = new CityListName();
                     cityListName.setCityName(countyName);
+                    Log.d("addCity ","cityListName is null?"+cityListName);
                     mCoolWeatherDB.saveCityListName(cityListName);
 
                     startActivity(intent);

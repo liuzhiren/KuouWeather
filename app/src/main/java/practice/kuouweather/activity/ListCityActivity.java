@@ -86,9 +86,10 @@ public class ListCityActivity extends Activity implements View.OnClickListener {
     }
     private void initCity() {
         try {
+            //initCitys();
             Log.d("addCity","是否进了TRY");
             cityNameList=mCoolWeatherDB.LoadCityNameList();
-            Log.d("initCity","size"+cityNameList.size());
+            Log.d("addCity","size"+cityNameList.size());
             if(cityNameList.size()>0){
                 datalist.clear();
                 for(CityListName c:cityNameList){
@@ -96,8 +97,6 @@ public class ListCityActivity extends Activity implements View.OnClickListener {
                 }
                 mAdapter.notifyDataSetChanged();//// 适配器的内容改变时需要强制调用getView来刷新每个Item的内容
                 listcity.setSelection(0);
-            }else {
-                initCitys();
             }
         }catch (Exception e){
             e.printStackTrace();

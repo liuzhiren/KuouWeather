@@ -157,7 +157,7 @@ public class CoolWeatherDB {
     }
     public List<CityListName> LoadCityNameList(){
         List<CityListName> list=new ArrayList<CityListName>();//对象数组
-        Log.d("addCity",""+list.size());
+        Log.d("addCitySize：",""+list.size());
         Cursor cursor=db.query("CityListName",null,null,null,null,null,null);
         if(cursor.moveToFirst()){
             do{
